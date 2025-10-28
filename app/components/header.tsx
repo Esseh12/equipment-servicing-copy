@@ -1,0 +1,49 @@
+import { Button } from './ui/button';
+
+function Header({
+	userRole,
+	onLogout,
+}: {
+	userRole: string | null;
+	onLogout: () => void;
+}) {
+	return (
+		<div className='bg-white border-b border-[#e2e8f0]'>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+				<div className='flex justify-between items-center h-16'>
+					<div className='flex items-center space-x-4'>
+						<img
+							src='/'
+							alt='Access Bank'
+							className='h-8'
+						/>
+						<h1 className="font-['Inter:Medium',_sans-serif] text-[18px] text-[#1e293b]">
+							Service Central
+						</h1>
+					</div>
+					<div className='flex items-center space-x-6'>
+						<div className='flex items-center space-x-2'>
+							<span className="font-['Inter:Regular',_sans-serif] text-[12px] text-[#64748b]">
+								Role:
+							</span>
+							<span className="font-['Inter:Medium',_sans-serif] text-[12px] text-[#003883]">
+								{userRole === 'hop'
+									? 'Head of Place (HOP)'
+									: userRole === 'facility'
+									? 'Facility Management'
+									: userRole}
+							</span>
+						</div>
+						<Button
+							variant='outline'
+							size='sm'
+							onClick={onLogout}
+							className='border-[#d1d5db] text-[#374151] hover:bg-[#f9fafb]'>
+							Logout
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}

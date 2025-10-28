@@ -1,0 +1,67 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import {
+	ServiceRequest,
+	AuditEntry,
+} from '@/app/components/equipment/EquipmentTypes';
+import { mockServiceRequests } from '@/app/components/equipment/MockData';
+import { AutomationRule } from '@/app/components/equipment/AutomationSetup';
+
+interface UserState {
+	userRole: 'hop' | 'facility' | null;
+	currentUser: string;
+	userBranch: string;
+	setUser: (role: 'hop' | 'facility', email: string, branch?: string) => void;
+	clearUser: () => void;
+}
+
+interface RequestState {
+	allRequests: ServiceRequest[];
+	automationRules: AutomationRule[];
+	addRequest: (request: ServiceRequest) => void;
+	updateRequest: (id: string, updates: Partial<ServiceRequest>) => void;
+	setRequests: (requests: ServiceRequest[]) => void;
+	setAutomationRules: (rules: AutomationRule[]) => void;
+}
+
+export const useStore = create<UserState & RequestState>()(
+	persist(
+		(set) => ({
+			// User state
+			userRole: null,
+			currentUser: '',
+			userBranch: '',
+			setUser: (role, email, branch) =>
+				set({
+					userRole: role,
+					currentUser: email,
+					userBranch: branch || '',
+				}),
+			clearUser: () =>
+				set({
+					userRole: null,
+					currentUser: '',
+					userBranch: '',
+				}),
+
+			// Request state
+			allRequests: mockServiceRequests,
+			automationRules: [],
+			addRequest: (request) =>
+				set((state) => ({
+					allRequests: [...state.allRequests, request],
+				})),
+			updateRequest: (id, updates) =>
+				set((state) => ({
+					allRequests: state.allRequests.map((req) =>
+						req.id === id ? { ...req, ...updates } : req
+					),
+				})),
+			setRequests: (requests) => set({ allRequests: requests }),
+			setAutomationRules: (rules) => set({ automationRules: rules }),
+		}),
+		{
+			name: 'equipment-servicing-storage',
+		}
+	)
+);

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { ServiceCentralLayout } from '../ServiceCentralLayout';
 import { BreadcrumbNavigation } from '../shared/BreadcrumbNavigation';
