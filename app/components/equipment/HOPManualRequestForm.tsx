@@ -20,6 +20,7 @@ interface HOPManualRequestFormProps {
 	onLogout: () => void;
 	currentUser: string;
 	userBranch: string;
+	userBranchCode: string;
 }
 
 // Sidebar
@@ -35,7 +36,7 @@ function SidebarContent({
 			<div className='h-[65px] border-b border-[#d0d5dd] flex items-center px-[16px]'>
 				<div className='flex items-center gap-[10px]'>
 					<img
-						src='/'
+						src='/images/Access_logo-white2.png'
 						alt='Access Bank'
 						className='h-8'
 					/>
@@ -82,12 +83,14 @@ function MainContent({
 	onBack,
 	onSubmit,
 	userBranch,
+	userBranchCode,
 }: HOPManualRequestFormProps) {
-	const branch = mockBranches.find((b) => b.code === userBranch);
+	const branchName = userBranch || '';
+	const branchCode = userBranchCode || '';
 
 	const [formData, setFormData] = useState({
-		branchCode: userBranch,
-		branchName: branch?.name || '',
+		branchCode,
+		branchName,
 		equipmentType: '',
 		urgency: 'Medium' as 'Low' | 'Medium' | 'High',
 		dateRequested: new Date().toISOString().split('T')[0],

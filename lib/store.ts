@@ -11,10 +11,12 @@ interface UserState {
 	userRole: 'branch_mgr' | 'facility' | null;
 	currentUser: string;
 	userBranch: string;
+	userBranchCode: string;
 	setUser: (
 		role: 'branch_mgr' | 'facility',
 		email: string,
-		branch?: string
+		branchName?: string,
+		branchCode?: string
 	) => void;
 	clearUser: () => void;
 }
@@ -35,17 +37,22 @@ export const useStore = create<UserState & RequestState>()(
 			userRole: null,
 			currentUser: '',
 			userBranch: '',
-			setUser: (role, email, branch) =>
+			userBranchCode: '',
+
+			setUser: (role, email, branchName, branchCode) =>
 				set({
 					userRole: role,
 					currentUser: email,
-					userBranch: branch || '',
+					userBranch: branchName || '',
+					userBranchCode: branchCode || '',
 				}),
+
 			clearUser: () =>
 				set({
 					userRole: null,
 					currentUser: '',
 					userBranch: '',
+					userBranchCode: '',
 				}),
 
 			// Request state

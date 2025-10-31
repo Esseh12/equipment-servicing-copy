@@ -20,12 +20,15 @@ const Entrust = () => {
 	useEffect(() => {
 		if (session?.user?.tokenValidated) {
 			const role = session.user.role?.[0];
-			console.log('here is the role', role);
 			const email = session.user.email;
-			const branch = session.user.branch?.branchName || '';
+
+			//Get both branch name and branch code
+			const branchName = session.user.branch?.branchName || '';
+			const branchCode = session.user?.branchCode || '';
 
 			if (role === 'branch_mgr') {
-				setUser('branch_mgr', email, branch);
+				// Pass both to your store
+				setUser('branch_mgr', email, branchName, branchCode);
 				router.push('/hop');
 			} else {
 				router.push('/');

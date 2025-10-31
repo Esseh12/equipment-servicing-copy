@@ -17,6 +17,7 @@ export default function NewRequestPage() {
 		currentUser,
 		userBranch,
 		clearUser,
+		userBranchCode,
 		allRequests,
 		addRequest,
 	} = useStore();
@@ -95,6 +96,7 @@ export default function NewRequestPage() {
 		<HOPManualRequestForm
 			userRole={userRole}
 			onBack={() => router.push('/hop')}
+			userBranchCode={userBranchCode}
 			onSubmit={handleSubmitManualRequest}
 			onLogout={() => {
 				clearUser();
