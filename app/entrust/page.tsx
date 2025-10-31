@@ -8,19 +8,30 @@ import InputField from '@/app/components/shared/InputField';
 import LoadingDialog from '@/app/components/shared/LoadingDialog';
 import { toast } from 'sonner';
 import ButtonPrimary from '@/app/components/shared/ButtonPrimary';
+import { useStore } from '@/lib/store';
 
 const Entrust = () => {
 	const router = useRouter();
 	const [token, setToken] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const { data: session } = useSession();
+	const { setUser } = useStore();
 
 	useEffect(() => {
 		if (session?.user?.tokenValidated) {
-			setIsLoading(true);
-			router.push('/account-information');
+			const role = session.user.role?.[0];
+			console.log('here is the role', role);
+			const email = session.user.email;
+			const branch = session.user.branch?.branchName || '';
+
+			if (role === 'branch_mgr') {
+				setUser('branch_mgr', email, branch);
+				router.push('/hop');
+			} else {
+				router.push('/');
+			}
 		}
-	}, [session]);
+	}, [session, router, setUser]);
 
 	const handleSignIn = async (e: any) => {
 		e.preventDefault();
@@ -39,10 +50,7 @@ const Entrust = () => {
 				return;
 			}
 
-			if (session?.user?.tokenValidated) {
-				setIsLoading(true);
-				router.push('/account-information');
-			}
+			// The effect above will handle redirect once session updates
 		} catch (error) {
 			console.error('Login error:', error);
 			toast.error('Login failed');
@@ -68,9 +76,8 @@ const Entrust = () => {
 		<div className='bg-white min-h-screen flex flex-col lg:flex-row'>
 			{isLoading && <LoadingDialog loading={isLoading} />}
 
-			{/* Background/Branding Section */}
+			{/* Left Section (Branding) */}
 			<div className='flex-1 lg:flex-1 relative overflow-hidden bg-[#003883] order-1 lg:order-1'>
-				{/* Mobile: smaller height, Desktop: full height */}
 				<div className='h-48 lg:h-full w-full relative'>
 					<div className="absolute inset-0 bg-cover bg-no-repeat bg-center bg-[url('/images/login-bg.png')] flex items-center justify-center p-4 sm:p-6 lg:p-12">
 						<div className='w-full max-w-xs sm:max-w-sm lg:max-w-md flex flex-col text-white text-center'>
@@ -90,50 +97,47 @@ const Entrust = () => {
 				</div>
 			</div>
 
-			{/* Form Section */}
-			<div className='flex-1 lg:flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 order-1 lg:order-2 min-h-[calc(100vh-12rem)] lg:min-h-screen'>
-				<div className='w-full max-w-sm '>
+			{/* Right Section (Form) */}
+			<div className='flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 order-1 lg:order-2 min-h-[calc(100vh-12rem)] lg:min-h-screen'>
+				<div className='w-full max-w-sm'>
 					<form
 						onSubmit={handleSignIn}
-						className='flex flex-col gap-4 sm:gap-5 lg:gap-6'>
-						{/* Form Header */}
+						className='flex flex-col gap-6'>
+						{/* Header */}
 						<div className='flex flex-col gap-3 text-center lg:text-left'>
 							<h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800'>
 								Token Verification
 							</h1>
 							<p className='text-sm sm:text-base text-gray-600'>
-								Please enter your entrust token to continue
+								Please enter your Entrust token to continue
 							</p>
 							{session?.user?.name && (
-								<p className='text-xs sm:text-sm text-blue-600 bg-blue-50 p-2 sm:p-3 rounded-lg'>
+								<p className='text-xs sm:text-sm text-blue-600 bg-blue-50 p-2 rounded-lg'>
 									Welcome back,{' '}
 									<span className='font-semibold'>{session.user.name}</span>
 								</p>
 							)}
 						</div>
 
-						{/* Token Input Field */}
-						<div className='flex flex-col gap-4 sm:gap-5 w-full'>
-							<InputField
-								name='token'
-								label='Entrust Token'
-								onChange={(e) => setToken(e.target.value)}
-								value={token}
-								placeholder='Enter your token'
-								className='border text-sm sm:text-base'
-								autoComplete='off'
-							/>
-						</div>
+						{/* Token Input */}
+						<InputField
+							name='token'
+							label='Entrust Token'
+							onChange={(e) => setToken(e.target.value)}
+							value={token}
+							placeholder='Enter your token'
+							className='border text-sm sm:text-base'
+							autoComplete='off'
+						/>
 
-						{/* Action Buttons */}
-						<div className='w-full flex flex-col gap-3 sm:gap-4 pt-2'>
-							{/* Submit Button */}
+						{/* Buttons */}
+						<div className='flex flex-col gap-4 pt-2'>
 							<button
 								type='submit'
-								className={`w-full border-2 px-4 py-2 text-white font-inter font-semibold rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base transition-all duration-200 ${
+								className={`w-full border-2 px-4 py-2 text-white font-semibold rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base transition-all duration-200 ${
 									isLoading
 										? 'bg-gray-400 border-gray-400 cursor-not-allowed opacity-50'
-										: 'border-primaryBlue bg-primaryBlue hover:bg-blue-800 hover:border-blue-800'
+										: 'border-primaryBlue bg-blue-800 hover:bg-blue-800 hover:border-blue-800'
 								}`}
 								disabled={isLoading || !token.trim()}>
 								{isLoading ? (
@@ -146,7 +150,6 @@ const Entrust = () => {
 								)}
 							</button>
 
-							{/* Go Back Button */}
 							<ButtonPrimary
 								onClick={handleSignOut}
 								noBg
@@ -155,13 +158,6 @@ const Entrust = () => {
 								Go Back
 							</ButtonPrimary>
 						</div>
-
-						{/* Help Text */}
-						{/* <div className="text-center pt-2">
-              <p className="text-xs sm:text-sm text-gray-500">
-                Token not working? Contact your system administrator for assistance
-              </p>
-            </div> */}
 					</form>
 				</div>
 			</div>

@@ -17,8 +17,13 @@ export default function CompletionPage() {
 	const request = allRequests.find((r) => r.id === requestId);
 
 	useEffect(() => {
-		if (!userRole || userRole !== 'hop') {
-			router.push('/');
+		if (userRole === undefined) return;
+
+		if (userRole !== 'branch_mgr') {
+			const timeout = setTimeout(() => {
+				router.push('/');
+			}, 1500); // add a short delay
+			return () => clearTimeout(timeout);
 		}
 	}, [userRole, router]);
 
@@ -68,7 +73,7 @@ export default function CompletionPage() {
 		router.push('/hop');
 	};
 
-	if (!userRole || userRole !== 'hop' || !request) {
+	if (!userRole || userRole !== 'branch_mgr' || !request) {
 		return null;
 	}
 

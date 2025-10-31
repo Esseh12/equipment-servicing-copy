@@ -22,8 +22,13 @@ export default function NewRequestPage() {
 	} = useStore();
 
 	useEffect(() => {
-		if (!userRole || userRole !== 'hop') {
-			router.push('/');
+		if (userRole === undefined) return;
+
+		if (userRole !== 'branch_mgr') {
+			const timeout = setTimeout(() => {
+				router.push('/');
+			}, 1500); // add a short delay
+			return () => clearTimeout(timeout);
 		}
 	}, [userRole, router]);
 
@@ -82,7 +87,7 @@ export default function NewRequestPage() {
 		router.push('/hop');
 	};
 
-	if (!userRole || userRole !== 'hop') {
+	if (!userRole || userRole !== 'branch_mgr') {
 		return null;
 	}
 

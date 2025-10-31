@@ -8,10 +8,14 @@ import { mockServiceRequests } from '@/app/components/equipment/MockData';
 import { AutomationRule } from '@/app/components/equipment/AutomationSetup';
 
 interface UserState {
-	userRole: 'hop' | 'facility' | null;
+	userRole: 'branch_mgr' | 'facility' | null;
 	currentUser: string;
 	userBranch: string;
-	setUser: (role: 'hop' | 'facility', email: string, branch?: string) => void;
+	setUser: (
+		role: 'branch_mgr' | 'facility',
+		email: string,
+		branch?: string
+	) => void;
 	clearUser: () => void;
 }
 
